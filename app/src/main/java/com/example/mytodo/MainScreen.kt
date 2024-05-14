@@ -79,7 +79,7 @@ fun Greeting(
                 }
             } else {
                 item {
-                    Text(text = "No Data")
+                    text = "Click On The Button to Add Todo", textAlign = TextAlign.Center, fontSize = 20.sp,modifier = Modifier.fillMaxSize().padding(top = 350.dp)
                 }
             }
         }
