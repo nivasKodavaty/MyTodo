@@ -1,22 +1,37 @@
-package com.example.mytodo.repository
-
 import com.example.mytodo.data.Todo
-import com.example.mytodo.data.TodoDao
+import io.realm.kotlin.Realm
+import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 
-class TodoRepository(private val todoDao: TodoDao) {
-
-    val allTodos: Flow<List<Todo>> = todoDao.getAllTodos()
-
-    suspend fun insert(todo: Todo){
-        todoDao.insert(todo)
+class TodoRepository(private val realm: Realm) {
+    fun add(todo: Todo) {
+        realm.writeBlocking {
+            copyToRealm(todo)
+        }
     }
 
-    suspend fun delete(todo: Todo){
-        todoDao.delete(todo)
+    fun getAll(): Flow<List<Todo>> = realm.query<Todo>().asFlow()
+        .map { results ->
+            results.list.toList()
+        }
+    fun delete(todo: Todo) {
+        realm.writeBlocking {
+            val item = query<Todo>("id == $0", todo.id).first().find()
+            if (item != null) {
+                delete(item)
+            }
+        }
+    }
+    fun update(todo: Todo) {
+        realm.writeBlocking {
+            val item = query<Todo>("id == $0", todo.id).first().find()
+            if (item != null) {
+                item.title = todo.title
+                item.description=todo.description
+            }
+    }
     }
 
-    suspend fun update(todo: Todo){
-        todoDao.update(todo.id, todo.title, todo.note)
-    }
 }

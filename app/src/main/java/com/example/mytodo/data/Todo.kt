@@ -1,13 +1,13 @@
 package com.example.mytodo.data
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.realm.kotlin.types.RealmObject
+import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
-@Entity(tableName = "todo_table")
-data class Todo(
-    @PrimaryKey(autoGenerate = true) val id: Int?,
-    @ColumnInfo(name = "title") val title: String?,
-    @ColumnInfo(name = "note") val note: String?,
-    @ColumnInfo(name = "date") val date: String
-): java.io.Serializable
+open class Todo : RealmObject {
+    @PrimaryKey
+    var id: String=UUID.randomUUID().toString()
+    var title: String = ""
+    var description: String = ""
+}
