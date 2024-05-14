@@ -7,6 +7,7 @@ import com.example.mytodo.data.Todo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AppViewModel : ViewModel() {
@@ -19,6 +20,9 @@ class AppViewModel : ViewModel() {
 
     private val _homeState = MutableStateFlow(HomeState())
     val homeState: StateFlow<HomeState> = _homeState.asStateFlow()
+
+    private val _todo = MutableStateFlow(Todo())
+    val todo: StateFlow<Todo> = _todo.asStateFlow()
 
 
     fun addTodo(todo: Todo) {
@@ -39,9 +43,16 @@ class AppViewModel : ViewModel() {
         realmClient.deleteTodo(todo)
     }
 
-//    fun updateTodo(todo: Todo) {
-//        repository.update(todo)
-//    }
+    fun updateTodo(todo: Todo) {
+        realmClient.updateTodo(todo)
+    }
+
+    fun getTodoById(id: String) {
+        val todo = realmClient.getTodoById(id)
+        todo?.let {
+            _todo.value = it
+        }
+    }
 
 }
 

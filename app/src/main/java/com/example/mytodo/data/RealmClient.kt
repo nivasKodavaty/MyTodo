@@ -12,6 +12,9 @@ object RealmClient {
         val configuration = RealmConfiguration.create(schema = setOf(Todo::class))
         Realm.open(configuration)
     }
+    fun getTodoById(id: String): Todo? {
+        return realm.query<Todo>("id = $0", id).first().find()
+    }
 
     fun getAllTodoAsFlow(): Flow<List<Todo>> {
         return realm.query<Todo>().asFlow().map { it.list }

@@ -1,5 +1,7 @@
 package com.example.mytodo
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +10,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,18 +24,29 @@ import androidx.navigation.NavController
 import com.example.mytodo.ViewModel.AppViewModel
 import com.example.mytodo.data.Todo
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun UpdateScreen(
     navController: NavController,
-    viewModel: AppViewModel = viewModel(),
-    modifier: Modifier = Modifier
+    viewModel: AppViewModel,
+    modifier: Modifier = Modifier,
 ) {
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        val todoId = navController.currentBackStackEntry?.arguments?.getString("todoId")
+        val todo = viewModel.todo.collectAsState()
+        LaunchedEffect(key1 = null) {
+            todoId?.let {
+                viewModel.getTodoById(it)
+            } ?: run {
+                navController.popBackStack()
+            }
+        }
         var updateTitle by remember {
             mutableStateOf("")
         }
@@ -54,7 +69,9 @@ fun UpdateScreen(
             },
         )
         Button(onClick = {
-//            viewModel.updateTodo(Todo().apply { title = updateTitle;description = textDescription })
+            viewModel.updateTodo(Todo().apply {
+                id = todoId; title = updateTitle;description = textDescription
+            })
             navController.popBackStack()
         }) {
             Text(text = "Save")

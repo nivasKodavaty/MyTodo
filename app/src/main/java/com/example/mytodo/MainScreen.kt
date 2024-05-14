@@ -105,13 +105,12 @@ fun Listcard(
 
             IconButton(
                 onClick = {
-                    navController.navigate("Update")
+                    navController.navigate("Update/${todo.id}")
                 }, modifier = Modifier
                     .weight(1f)
                     .padding()
             ) {
                 Icon(Icons.Default.Edit, contentDescription = "Add")
-//                viewModel.deleteTodo(todo)
             }
             IconButton(onClick = { viewModel.deleteTodo(todo) }, modifier = Modifier.weight(1f)) {
                 Icon(Icons.Default.Delete, contentDescription = "Add")
